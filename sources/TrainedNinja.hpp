@@ -7,7 +7,7 @@ using namespace ariel;
 class TrainedNinja : public Ninja
     {
     public:
-        TrainedNinja(std::string name , Point location);
+        TrainedNinja(std::string name , const Point &location);
         ~TrainedNinja(){};
     };
 #endif

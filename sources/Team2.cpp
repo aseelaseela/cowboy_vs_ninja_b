@@ -7,30 +7,31 @@
 #include "TrainedNinja.hpp"
 #include "Character.hpp"
 #include <vector>
-#include<iostream>
-#include<limits>
+#include <iostream>
+#include <limits>
 #include <algorithm>
-#include<typeinfo>
+#include <typeinfo>
 #include <utility>
-#include<list>
-using namespace std; 
+#include <list>
+using namespace std;
 using namespace ariel;
 
-Team2 :: Team2(Character *leader) : Team(leader){}
-void Team2 :: attack(Team *enemyTeam){
+Team2 ::Team2(Character *leader) : Team(leader) {}
+void Team2 ::attack(Team *enemyTeam)
+{
     if (enemyTeam == nullptr)
     {
-        throw invalid_argument( "Null Pointer");
+        throw invalid_argument("Null Pointer");
     }
     if (enemyTeam == this)
     {
-        throw invalid_argument("The team can't attack himself ");
+        throw runtime_error("The team can't attack himself ");
     }
-    if (enemyTeam->stillAlive()==0)
+    if (enemyTeam->stillAlive() == 0)
     {
         throw runtime_error("Cannot attack a dead team");
     }
-     if (stillAlive()==0)
+    if (stillAlive() == 0)
     {
         throw runtime_error("the team is dead");
     }
@@ -38,60 +39,56 @@ void Team2 :: attack(Team *enemyTeam){
     {
         setNextLeader();
     }
-    Character *target=find_a_target(enemyTeam);
-    for(const auto &member : getMember())
+    Character *target = find_a_target(enemyTeam);
+    for (const auto member : getMember())
     {
-        Cowboy *cb=dynamic_cast<Cowboy*>(member);
+        if (!target->isAlive())
+        {
+            if (enemyTeam->stillAlive() == 0)
+            {
+                return;
+            }
+
+            target = find_a_target(enemyTeam);
+        }
+        Cowboy *cb = dynamic_cast<Cowboy *>(member);
         if (cb != nullptr && cb->isAlive())
         {
-            if(target->isAlive())
+            if (cb->hasboolets())
             {
-                if (cb->hasboolets())
-                {
-                    cb->shoot(target);
-                }
-                else cb->reload();
+                cb->shoot(target);
             }
-            else 
+            else
+                cb->reload();
+        }
+        else
+        {
+            Ninja *nj = dynamic_cast<Ninja *>(member);
+
+            if (nj == nullptr)
             {
-                target=find_a_target(enemyTeam);
-                if (target == nullptr)
-                {
-                    return;
-                }
-                else if (cb->hasboolets())
-                {
-                   cb->shoot(target);
-                }
-                else cb->reload();
+                continue;
+            }
+            
+            if (!nj->isAlive())
+                continue;
+            if (nj->distance(target) <= 1.0)
+            {
+                nj->slash(target);
+            }
+
+            else
+            {
+                nj->move(target);
             }
         }
-        else 
-        {
-            Ninja *nj=dynamic_cast<Ninja*>(member);
-            if (!nj->isAlive())continue;
-            if (target->isAlive())
-            {
-                if (nj->distance(target) <= 1.0)
-                {
-                    nj->slash(target);
-                }
-                else
-                {
-                    target=find_a_target(enemyTeam);
-                    if (target==nullptr)
-                    {
-                        return;
-                    }
-                    else nj->move(target);
-                }
-            }  
-        } 
     }
 }
-void Team2 :: print(){
+
+void Team2 ::print()
+{
     for (const auto &member : getMember())
     {
         cout << member->print() << endl;
-    }  
+    }
 }

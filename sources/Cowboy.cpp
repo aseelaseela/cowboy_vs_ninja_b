@@ -3,8 +3,7 @@
 #include <iostream>
 using namespace std; 
 using namespace ariel;
-Cowboy :: Cowboy(std::string name , Point &location) :bullets(6) , Character(location ,name , 110 ){}
-Cowboy :: Cowboy(std::string name , Point &&location) :bullets(6) , Character(location ,name , 110 ){}
+Cowboy :: Cowboy(std::string name , const Point &location) :bullets(6) , Character(location ,name , 110 ){}
 Cowboy :: ~Cowboy()=default;
 void Cowboy :: shoot(Character *enemy){
     if (enemy == nullptr)

@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std; 
 using namespace ariel;
-Ninja :: Ninja(std::string name , Point location , int hitPoints ,int speed ) :Character(location,std :: move(name),hitPoints),speed(speed){}
+Ninja :: Ninja(std::string name , const Point &location , int hitPoints ,int speed ) :Character(location,std :: move(name),hitPoints),speed(speed){}
 void Ninja :: move(Character *enemy){
     if (enemy == nullptr)
     {
@@ -21,10 +21,9 @@ void Ninja :: move(Character *enemy){
         throw runtime_error("The ninja is dead ");
     }
     //this->setLocation(Point::moveTowards(this->getLocation(),enemy->getLocation(),this->speed));
-    double dist=getLocation().distance(enemy->getLocation());
-    double move_x=(enemy->getLocation().getX()-getLocation().getX())*(speed/dist);
-    double move_y=(enemy->getLocation().getY()-getLocation().getY())*(speed/dist);
-    setLocation(Point((double)(getLocation().getX()+move_x),(double)(getLocation().getY()+move_y)));
+    Point newLocation = Point::moveTowards(this->getLocation(),enemy->getLocation(),this->speed);
+
+    this->setLocation(newLocation);
 }
 void Ninja :: slash(Character *enemy){
     if (enemy == nullptr )
@@ -33,7 +32,7 @@ void Ninja :: slash(Character *enemy){
     }
     if (enemy == this)
     {
-        throw invalid_argument("Can't slash yourself ");
+        throw runtime_error("Can't slash yourself ");
     }
     if (! (enemy->isAlive()))
     {
@@ -63,5 +62,4 @@ void Ninja :: setSpeed(int speed)
 {
     this->speed=speed;
 }
-
 

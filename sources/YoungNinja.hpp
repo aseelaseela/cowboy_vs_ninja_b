@@ -6,7 +6,7 @@ using namespace ariel;
     class YoungNinja : public Ninja
     {
     public:
-        YoungNinja(std::string name , Point location);
+        YoungNinja(std::string name , const Point &location);
         ~YoungNinja(){};
     };
 #endif

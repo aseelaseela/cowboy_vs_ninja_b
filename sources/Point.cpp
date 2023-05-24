@@ -12,7 +12,7 @@ double Point :: distance (Point point) const
     double res= sqrt(pow(dx,2)+pow(dy,2) );
     return res;
 }
-Point Point ::moveTowards(Point &source ,Point &destination , double dist ) 
+Point Point ::moveTowards(const Point &source ,const Point &destination , double dist ) 
 {
     if (dist<0)
     {
@@ -27,7 +27,7 @@ Point Point ::moveTowards(Point &source ,Point &destination , double dist )
     double dy=destination.y - source.y;   
     double newx=source.x+(dist/src_dest_distance)*dx;
     double newy=source.y+(dist/src_dest_distance)*dy;
-    return {newx,newy};
+    return Point(newx,newy);
 }
 std :: string Point ::print()const 
 {

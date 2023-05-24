@@ -25,7 +25,7 @@ namespace ariel
         Character* getLeader();
         void setLeader(Character* newLeader);
         void setNextLeader();
-        std :: vector <Character*>getMember();
+        const std ::vector<Character *>&getMember() const;
         Character* find_a_target(Team *enemyTeam);
 
         Team(const Team& other)=default;

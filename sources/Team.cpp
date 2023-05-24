@@ -1,15 +1,15 @@
 #include "Team.hpp"
 #include <vector>
-#include<iostream>
-#include<limits>
+#include <iostream>
+#include <limits>
 #include <algorithm>
-#include<typeinfo>
+#include <typeinfo>
 #include <utility>
-#include<list>
-using namespace std; 
+#include <list>
+using namespace std;
 using namespace ariel;
 
-Team :: Team(Character *leader) : leader(leader)
+Team ::Team(Character *leader) : leader(leader)
 {
     if (leader->getInTeam())
     {
@@ -18,7 +18,7 @@ Team :: Team(Character *leader) : leader(leader)
     members.push_back(leader);
     leader->setinTeam(true);
 }
-void Team :: add(Character *member)
+void Team ::add(Character *member)
 {
     if (member == nullptr)
     {
@@ -28,61 +28,64 @@ void Team :: add(Character *member)
     {
         throw runtime_error("Member is already in a team ");
     }
-    if (members.size()==10)
+    if (members.size() == 10)
     {
         throw runtime_error("Can't add the memer , the team is full ");
     }
-    if (stillAlive()==0)
+    if (stillAlive() == 0)
     {
         throw runtime_error("A dead team cannot attack");
     }
-    
+
     members.push_back(member);
-    member->setinTeam(true);    
+    member->setinTeam(true);
 }
-void Team :: setNextLeader()
+void Team ::setNextLeader()
 {
-    Character *newleader=nullptr;
-    double closestdistance=numeric_limits<double>::max();
-    for(auto &member : members)
+    Character *newleader = nullptr;
+    double closestdistance = numeric_limits<double>::max();
+    for (auto member : members)
     {
-        if (member->isAlive() && leader->distance(member) < closestdistance)
+        double dist = leader->distance(member);
+        if (member->isAlive() && dist < closestdistance)
         {
-            newleader=member;
-            closestdistance=leader->distance(member);
-        }   
+            newleader = member;
+            closestdistance = dist;
+        }
     }
-    leader=newleader;
+
+    leader = newleader;
 }
-Character* Team:: find_a_target(Team *enemyTeam)
+Character *Team::find_a_target(Team *enemyTeam)
 {
-    Character *ptarget=nullptr;
-    double closestdistance=numeric_limits<double>::max();
-    for(auto &member:enemyTeam->members)
+    Character *ptarget = nullptr;
+    double closestdistance = numeric_limits<double>::max();
+    for (auto member : enemyTeam->members)
     {
-        if (member->isAlive() && leader->distance(member) < closestdistance)
+        double dist = leader->distance(member);
+        if (member->isAlive() && dist  < closestdistance)
         {
-            ptarget=member;
-            closestdistance=leader->distance(member);
-        } 
+            ptarget = member;
+            closestdistance = dist;
+        }
     }
     return ptarget;
 }
-void Team :: attack(Team *enemyTeam)
+void Team ::attack(Team *enemyTeam)
 {
-    if (enemyTeam==nullptr)
+    if (enemyTeam == nullptr)
     {
-        throw invalid_argument( "Null Pointer");
+        throw invalid_argument("Null Pointer");
     }
-   else if (enemyTeam==this)
+    else if (enemyTeam == this)
     {
-        throw invalid_argument("The team can't attack himself ");
+        throw runtime_error("The team can't attack himself ");
     }
-   else if (enemyTeam->stillAlive()==0)
+    else if (enemyTeam->stillAlive() == 0)
     {
         throw std::runtime_error("Cannot attack a dead team");
     }
-    else if (this->stillAlive()==0)
+    else if (this->stillAlive() == 0)
     {
         throw std::runtime_error("the team is dead");
     }
@@ -90,71 +93,68 @@ void Team :: attack(Team *enemyTeam)
     {
         setNextLeader();
     }
-    Character *target =find_a_target(enemyTeam);
-    //cowboys
-    for (auto &member:members)
+    Character *target = find_a_target(enemyTeam);
+    // cowboys
+    for (auto &member : members)
     {
-        Cowboy *cb=dynamic_cast<Cowboy *>(member);
+        Cowboy *cb = dynamic_cast<Cowboy *>(member);
         if (cb != nullptr)
         {
-            if(!cb->isAlive())continue;
-            if (target->isAlive())
+            if (!cb->isAlive())
+                continue;
+            if (!target->isAlive())
             {
-                if (cb->hasboolets())
-                {
-                    cb->shoot(target);
-                }
-                else cb->reload();   
-            }    
-                else 
-                {
-                target=find_a_target(enemyTeam);
-                if (target==nullptr)
+                if (!enemyTeam->stillAlive())
                 {
                     return;
                 }
-                else if (cb->hasboolets())
+                else
                 {
-                   cb->shoot(target);
+                    target = find_a_target(enemyTeam);
                 }
-                else cb->reload();                
-                }     
-        } 
+            }
+            if (cb->hasboolets())
+            {
+                cb->shoot(target);
+            }
+            else
+                cb->reload();
+        }
     }
-    //ninjas
-    for (auto &member:members)
+    // ninjas
+    for (auto &member : members)
     {
-        Ninja *nj=dynamic_cast<Ninja *>(member);
+        Ninja *nj = dynamic_cast<Ninja *>(member);
         if (nj != nullptr)
         {
-            if(!nj->isAlive())continue;
-            if (target->isAlive())
+            if (!nj->isAlive())
+                continue;
+
+            if (!target->isAlive())
             {
-                if (nj->distance(target) <= 1.0 )
+                if (!enemyTeam->stillAlive())
                 {
-                   nj->slash(target);
+                    return;
                 }
-                else nj->move(target);
+                else
+                {
+                    target = find_a_target(enemyTeam);
+                }
             }
-            else 
+
+            if (nj->distance(target) <= 1.0)
             {
-                target=find_a_target(enemyTeam);
-                if (target == nullptr)
-                {
-                   return;
-                }
-                else if (nj->distance(target) <= 1.0)
-                {
-                    nj->slash(target);
-                }
-                else nj->move(target);
+                nj->slash(target);
             }
+            else
+                nj->move(target);
         }
     }
 }
-int Team :: stillAlive(){
-    int count=0;
-    for (Character *member:members)
+int Team ::stillAlive()
+{
+    int count = 0;
+    for (Character *member : members)
     {
         if (member->isAlive())
         {
@@ -163,39 +163,40 @@ int Team :: stillAlive(){
     }
     return count;
 }
-void Team :: print(){
-    cout << "Team Leader : " << leader->getName() <<endl;
-    for (auto &member:members)
+void Team ::print()
+{
+    cout << "Team Leader : " << leader->getName() << endl;
+    for (auto &member : members)
     {
-        if (dynamic_cast<Cowboy*>(member) != nullptr)
+        if (dynamic_cast<Cowboy *>(member) != nullptr)
         {
-            cout << member->print() <<endl ;
+            cout << member->print() << endl;
         }
     }
-    for (auto &member:members)
+    for (auto &member : members)
     {
-        if (dynamic_cast<Ninja*>(member) != nullptr)
+        if (dynamic_cast<Ninja *>(member) != nullptr)
         {
-            cout << member->print() <<endl ;
+            cout << member->print() << endl;
         }
     }
 }
-Character* Team :: getLeader()
+Character *Team ::getLeader()
 {
     return this->leader;
-
 }
-void Team :: setLeader(Character* newLeader)
+void Team ::setLeader(Character *newLeader)
 {
-    this->leader=newLeader;
+    this->leader = newLeader;
 }
-std :: vector <Character*> Team :: getMember()
+const std ::vector<Character *>& Team ::getMember() const
 {
     return this->members;
 }
-Team :: ~Team(){
-  /*  for (auto &member:members)
-    delete member;
-    members.clear();*/
+Team ::~Team()
+{
+    for (auto &member:members)
+        delete member;
+    
+    members.clear();
 }
-

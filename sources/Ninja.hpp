@@ -8,7 +8,7 @@ namespace ariel
     private:
         int speed;
     public:
-        Ninja(std::string name , Point location , int health ,int speed ) ;
+        Ninja(std::string name , const Point &location , int health ,int speed ) ;
         ~Ninja(){};
         void move(Character *enemy);
         void slash(Character *enemy);

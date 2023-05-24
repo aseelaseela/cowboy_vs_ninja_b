@@ -18,7 +18,7 @@ public:
     Character& operator=(const Character& other);
     Character& operator=(const Character&& other) noexcept;
 
-    Character(Point& location , std :: string name , int health );
+    Character(const Point &location , std :: string name , int health );
     Character();
     virtual ~Character(){} 
 

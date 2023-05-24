@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 using namespace ariel;
-Character :: Character(Point& nlocation , std :: string nname , int nhealth ) : location(nlocation),name(nname),inTeam(false),hitPoints(nhealth){}
+Character :: Character(const Point &location , std :: string nname , int nhealth ) : location(location),name(nname),inTeam(false),hitPoints(nhealth){}
 bool Character ::isAlive() const{
     return (this->hitPoints>0) ? true : false ;
 }
@@ -38,4 +38,3 @@ void Character :: setinTeam(bool inTeam){
 void Character :: setName(const string& newName){
     name=newName;
 }
-

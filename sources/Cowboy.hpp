@@ -8,8 +8,7 @@ namespace ariel
     private:
         int bullets=0;
     public:
-        Cowboy(std::string name , Point &location);
-        Cowboy(std::string name , Point &&location);
+        Cowboy(std::string name , const Point &location);
         ~Cowboy() override;
 
         //shoot the enemy ,substract 10 from the hitpoints 10 points 
