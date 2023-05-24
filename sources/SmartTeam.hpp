@@ -1,5 +1,3 @@
-
-/*
 #ifndef SMART_TEAM_NINJA_HPP
 #define SMART_TEAM_NINJA_HPP
 #include "Team.hpp"
@@ -18,9 +16,9 @@ class SmartTeam : public Team
     {
     public:
         SmartTeam(Character *leader);
-        virtual ~SmartTeam();
         void attack(Team *enemyTeam) override;
+        Character* find_a_target(Team *enemyTeam);
+        Character* find_closest(Character* charcter , Team *enemyTeam);
         void print() override;
     };
 #endif    
-*/
